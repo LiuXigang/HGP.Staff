@@ -69,13 +69,37 @@ namespace HGP.Staff.Controllers
             var totalStr = "总数";
             charts.Legend.Add(totalStr);
             var totalData = list.OrderBy(n => n.Time).GroupBy(n => n.Time);
-            var totalSerie = new List<int>();
-            foreach (var item in totalData)
-            {
-                totalSerie.Add(item.Sum(n => n.EmployeeNumber));
-            }
+            var totalSerie = totalData.Select(item => item.Sum(n => n.EmployeeNumber)).ToList();
             charts.Series.Add(totalStr, totalSerie);
             return Json(charts);
+        }
+
+        public async Task<IActionResult> Table()
+        {
+            var list = await _service.GetllAllAsync();
+            var data = list.GroupBy(n => n.Time);
+            var model = new TableModel();
+            
+            foreach (var item in data)
+            {
+                var rows = new List<string>();
+                var i = item.OrderBy(n => n.Organization);
+                rows.Add(item.Key.ToString("yyyy-MM-dd"));
+                rows.AddRange(i.Select(oo => oo.EmployeeNumber.ToString()));
+                rows.Add(i.Select(n=>n.EmployeeNumber).Sum().ToString());
+                model.RowsData.Add(rows);
+
+                if (!model.Org.Any())
+                {
+                    var orgs = item.Select(n => n.Organization).OrderBy(n => n);
+                    var os = new List<string> { "" };
+                    os.AddRange(orgs.Select(o => o.EnumDesc()));
+                    os.Add("总数");
+                    model.Org = os;
+                }
+                
+            }
+            return View(model);
         }
 
     }

@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "Table";
+}
+@model TableModel
+
+    <div class="text-center">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                @{
+                    foreach (var org in Model.Org)
+                    {
+                        <th>@org</th>
+                    }
+                }
+            </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var rows in Model.RowsData)
+                    {
+                        <tr>
+                            @{
+                                foreach (var row in rows)
+                                {
+                                    <td>@row</td>
+                                }
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
