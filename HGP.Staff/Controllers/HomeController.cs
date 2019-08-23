@@ -102,5 +102,13 @@ namespace HGP.Staff.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(string time)
+        {
+            DateTime.TryParse(time, out var dateTime);
+            await _service.DeleteByTimeAsync(dateTime.Date);
+            return RedirectToAction(nameof(Table));
+        }
+
     }
 }
